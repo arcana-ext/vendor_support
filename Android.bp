@@ -1,0 +1,13 @@
+android_library {
+    name: "PreferenceExtensions",
+    srcs: [
+        "src/com/krypton/settings/preference/*.kt",
+    ],
+    defaults: [
+        "SettingsLibDefaults",
+    ],
+    static_libs: [
+        "androidx-constraintlayout_constraintlayout",
+        "androidx.preference_preference",
+    ],
+}
