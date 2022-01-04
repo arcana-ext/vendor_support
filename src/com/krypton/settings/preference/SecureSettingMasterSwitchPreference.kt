@@ -21,15 +21,16 @@ import android.content.Context
 import android.util.AttributeSet
 
 import androidx.core.content.res.TypedArrayUtils
+import androidx.preference.R
 
 import com.krypton.settings.preference.SecureSettingsStore
-import com.krypton.settings.R
 
 class SecureSettingMasterSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        R.attr.switchPreferenceStyle,
+        android.R.attr.switchPreferenceStyle),
     defStyleRes: Int = 0,
 ): MasterSwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
     init {

@@ -37,8 +37,9 @@ import com.krypton.settings.R
 open class MasterSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        androidx.preference.R.attr.switchPreferenceStyle,
+        android.R.attr.switchPreferenceStyle),
     defStyleRes: Int = 0,
 ): TwoTargetPreference(context, attrs, defStyleAttr, defStyleRes) {
 

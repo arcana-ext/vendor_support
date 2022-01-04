@@ -21,14 +21,12 @@ import android.content.Context
 import android.util.AttributeSet
 
 import androidx.core.content.res.TypedArrayUtils
-
-import com.krypton.settings.R
+import androidx.preference.R
 
 class SystemSettingSeekBarPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = R.attr.seekBarPreferenceStyle,
     defStyleRes: Int = 0,
 ): CustomSeekBarPreference(context, attrs, defStyleAttr, defStyleRes) {
     init {

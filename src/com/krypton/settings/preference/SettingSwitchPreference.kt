@@ -22,15 +22,15 @@ import android.util.AttributeSet
 
 import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.PreferenceDataStore
+import androidx.preference.R
 import androidx.preference.SwitchPreference
-
-import com.krypton.settings.R
 
 abstract class SettingSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        R.attr.switchPreferenceStyle,
+        android.R.attr.switchPreferenceStyle),
     defStyleRes: Int = 0,
 ): SwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
 

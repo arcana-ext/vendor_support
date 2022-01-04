@@ -23,14 +23,14 @@ import android.util.AttributeSet
 import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceDataStore
-
-import com.krypton.settings.R
+import androidx.preference.R
 
 abstract class SettingEditTextPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        R.attr.editTextPreferenceStyle,
+        android.R.attr.editTextPreferenceStyle),
     defStyleRes: Int = 0,
 ): EditTextPreference(context, attrs, defStyleAttr, defStyleRes) {
 

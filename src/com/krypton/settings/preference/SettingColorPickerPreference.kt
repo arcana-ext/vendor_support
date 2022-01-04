@@ -23,14 +23,14 @@ import android.util.AttributeSet
 import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.DialogPreference
 import androidx.preference.PreferenceDataStore
-
-import com.krypton.settings.R
+import androidx.preference.R
 
 abstract class SettingColorPickerPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        R.attr.dialogPreferenceStyle,
+        android.R.attr.dialogPreferenceStyle),
     defStyleRes: Int = 0,
 ): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
 

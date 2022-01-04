@@ -21,14 +21,14 @@ import android.content.Context
 import android.util.AttributeSet
 
 import androidx.core.content.res.TypedArrayUtils
-
-import com.krypton.settings.R
+import androidx.preference.R
 
 class SecureSettingSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
+        R.attr.switchPreferenceStyle,
+        android.R.attr.switchPreferenceStyle),
     defStyleRes: Int = 0,
 ): SettingSwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
     override fun getSettingsDataStore(context: Context) = SecureSettingsStore(context.contentResolver)

@@ -39,8 +39,7 @@ import com.krypton.settings.R
 open class CustomSeekBarPreference@JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
-                android.R.attr.preferenceStyle),
+    defStyleAttr: Int = androidx.preference.R.attr.seekBarPreferenceStyle,
     defStyleRes: Int = 0,
 ): Preference(context, attrs, defStyleAttr, defStyleRes), SeekBar.OnSeekBarChangeListener,
         View.OnClickListener, View.OnLongClickListener {
