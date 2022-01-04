@@ -20,16 +20,19 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 
+import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.DialogPreference
 import androidx.preference.PreferenceDataStore
 
-abstract class SettingColorPickerPreference(
-    private val context: Context,
-    attrs: AttributeSet?,
-): DialogPreference(
-    context,
-    attrs,
-) {
+import com.krypton.settings.R
+
+abstract class SettingColorPickerPreference @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
 
     override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
         return a.getString(index)

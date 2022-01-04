@@ -18,33 +18,24 @@
 package com.krypton.settings.preference
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.util.AttributeSet
 
+import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.PreferenceDataStore
 import androidx.preference.ListPreference
 
-abstract class SettingListPreference(
+import com.krypton.settings.R
+
+abstract class SettingListPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
-): ListPreference(
-    context,
-    attrs,
-) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): ListPreference(context, attrs, defStyleAttr, defStyleRes) {
+
     init {
         setPreferenceDataStore(getSettingsDataStore(context))
-    }
-
-    override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
-        return a.getString(index)
-    }
-
-    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any?) {
-        defaultValue?.let {
-            if (it is String) {
-                setValue(if (restoreValue) getPersistedString(it) else it)
-            }
-        }
     }
 
     abstract fun getSettingsDataStore(context: Context): PreferenceDataStore

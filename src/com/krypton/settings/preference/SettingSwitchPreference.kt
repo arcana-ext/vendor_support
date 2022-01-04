@@ -18,33 +18,24 @@
 package com.krypton.settings.preference
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.util.AttributeSet
 
+import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.PreferenceDataStore
 import androidx.preference.SwitchPreference
 
-abstract class SettingSwitchPreference(
+import com.krypton.settings.R
+
+abstract class SettingSwitchPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
-): SwitchPreference(
-    context,
-    attrs,
-) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): SwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
+
     init {
         setPreferenceDataStore(getSettingsDataStore(context))
-    }
-
-    override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
-        return a.getBoolean(index, false)
-    }
-
-    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any?) {
-        defaultValue?.let {
-            if (it is Boolean) {
-                setChecked(if (restoreValue) getPersistedBoolean(it) else it)
-            }
-        }
     }
 
     abstract fun getSettingsDataStore(context: Context): PreferenceDataStore

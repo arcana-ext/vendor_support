@@ -18,44 +18,24 @@
 package com.krypton.settings.preference
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.AttributeSet
 
+import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceDataStore
 
-abstract class SettingEditTextPreference(
+import com.krypton.settings.R
+
+abstract class SettingEditTextPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-): EditTextPreference(
-    context,
-    attrs,
-) {
-    private var autoSummary = false
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): EditTextPreference(context, attrs, defStyleAttr, defStyleRes) {
 
     init {
         setPreferenceDataStore(getSettingsDataStore(context))
-    }
-
-    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any?) {
-        defaultValue?.let {
-            if (it is String) {
-                setText(if (restoreValue) getPersistedString(it) else it)
-            }
-        }
-    }
-
-    override fun setText(text: String) {
-        super.setText(text)
-        if (autoSummary || (getSummary()?.isEmpty() ?: false)) {
-            setSummary(text)
-            autoSummary = true
-        }
-    }
-
-    override fun setSummary(summary: CharSequence) {
-        super.setSummary(summary)
-        autoSummary = false
     }
 
     abstract fun getSettingsDataStore(context: Context): PreferenceDataStore

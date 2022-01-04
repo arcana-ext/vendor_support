@@ -19,12 +19,16 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-public class SystemSettingColorPickerPreference(
+import androidx.core.content.res.TypedArrayUtils
+
+import com.krypton.settings.R
+
+public class SystemSettingColorPickerPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-): SettingColorPickerPreference(
-    context,
-    attrs,
-) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): SettingColorPickerPreference(context, attrs, defStyleAttr, defStyleRes) {
     override fun getSettingsDataStore(context: Context) = SystemSettingsStore(context.contentResolver)
 }

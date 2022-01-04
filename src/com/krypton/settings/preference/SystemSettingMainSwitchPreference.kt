@@ -19,7 +19,10 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
+import androidx.core.content.res.TypedArrayUtils
+
 import com.android.settingslib.widget.MainSwitchPreference
+import com.krypton.settings.R
 
 class SystemSettingMainSwitchPreference @JvmOverloads constructor(
     context: Context,

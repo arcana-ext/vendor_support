@@ -20,20 +20,18 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-import com.krypton.settings.R
+import androidx.core.content.res.TypedArrayUtils
+
 import com.krypton.settings.preference.SystemSettingsStore
+import com.krypton.settings.R
 
-class SystemSettingMasterSwitchPreference(
+class SystemSettingMasterSwitchPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int,
-    defStyleRes: Int,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
 ): MasterSwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): this(context, attrs, defStyleAttr, 0)
-    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, 0, 0)
-    constructor(context: Context): this(context, null, 0, 0)
-
     init {
         setPreferenceDataStore(SystemSettingsStore(context.contentResolver))
     }

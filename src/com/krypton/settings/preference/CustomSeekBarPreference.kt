@@ -36,36 +36,14 @@ import androidx.preference.PreferenceViewHolder
 
 import com.krypton.settings.R
 
-open class CustomSeekBarPreference(
-    private val context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int,
-    defStyleRes: Int,
-): Preference(
-    context,
-    attrs,
-    defStyleAttr,
-    defStyleRes,
-), SeekBar.OnSeekBarChangeListener, View.OnClickListener, View.OnLongClickListener {
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-    ): this(context, attrs, defStyleAttr, 0)
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-    ): this(
-        context,
-        attrs,
-        TypedArrayUtils.getAttr(context,
-            androidx.preference.R.attr.preferenceStyle,
-            android.R.attr.preferenceStyle),
-        )
-
-    constructor(context: Context): this(context, null)
+open class CustomSeekBarPreference@JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): Preference(context, attrs, defStyleAttr, defStyleRes), SeekBar.OnSeekBarChangeListener,
+        View.OnClickListener, View.OnLongClickListener {
 
     private var interval = 1
     private var units: String? = null

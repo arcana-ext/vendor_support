@@ -20,12 +20,16 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-class SecureSettingListPreference(
+import androidx.core.content.res.TypedArrayUtils
+
+import com.krypton.settings.R
+
+class GlobalSettingListPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
-): SettingListPreference(
-    context,
-    attrs,
-) {
-    override fun getSettingsDataStore(context: Context) = SecureSettingsStore(context.contentResolver)
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): SettingListPreference(context, attrs, defStyleAttr, defStyleRes) {
+    override fun getSettingsDataStore(context: Context) = GlobalSettingsStore(context.contentResolver)
 }

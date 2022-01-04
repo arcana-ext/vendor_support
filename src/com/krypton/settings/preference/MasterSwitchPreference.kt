@@ -24,6 +24,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.Switch
 
+import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.PreferenceViewHolder
 
 import com.android.settingslib.widget.TwoTargetPreference
@@ -33,16 +34,13 @@ import com.krypton.settings.R
  * A custom preference that provides inline switch toggle. It has a mandatory field for title, and
  * optional fields for icon and sub-text.
  */
-open class MasterSwitchPreference(
+open class MasterSwitchPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int,
-    defStyleRes: Int,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
 ): TwoTargetPreference(context, attrs, defStyleAttr, defStyleRes) {
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): this(context, attrs, defStyleAttr, 0)
-    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, 0, 0)
-    constructor(context: Context): this(context, null, 0, 0)
 
     private var switch: Switch? = null
     private var checked = false

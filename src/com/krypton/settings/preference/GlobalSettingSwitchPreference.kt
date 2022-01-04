@@ -20,12 +20,16 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-class GlobalSettingSwitchPreference(
+import androidx.core.content.res.TypedArrayUtils
+
+import com.krypton.settings.R
+
+class GlobalSettingSwitchPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
-): SettingSwitchPreference(
-    context,
-    attrs,
-) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = TypedArrayUtils.getAttr(context, R.attr.preferenceStyle,
+                android.R.attr.preferenceStyle),
+    defStyleRes: Int = 0,
+): SettingSwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
     override fun getSettingsDataStore(context: Context) = GlobalSettingsStore(context.contentResolver)
 }
