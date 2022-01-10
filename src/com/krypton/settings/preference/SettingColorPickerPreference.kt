@@ -18,6 +18,7 @@ package com.krypton.settings.preference
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.util.AttributeSet
 
 import androidx.core.content.res.TypedArrayUtils
@@ -34,9 +35,28 @@ abstract class SettingColorPickerPreference @JvmOverloads constructor(
     defStyleRes: Int = 0,
 ): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
 
+    private var color: String? = null
+
+    init {
+        setPreferenceDataStore(getSettingsDataStore(context))
+    }
+
     override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
         return a.getString(index)
     }
+
+    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any) {
+        if (defaultValue is String) {
+            color = if (restoreValue) {
+                getPersistedString(defaultValue)
+            } else {
+                defaultValue
+            }
+        }
+        setSummary(color)
+    }
+
+    fun getColor(): String? = color
 
     abstract fun getSettingsDataStore(context: Context): PreferenceDataStore
 }
