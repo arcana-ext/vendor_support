@@ -45,14 +45,9 @@ abstract class SettingColorPickerPreference @JvmOverloads constructor(
         return a.getString(index)
     }
 
-    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any) {
-        if (defaultValue is String) {
-            color = if (restoreValue) {
-                getPersistedString(defaultValue)
-            } else {
-                defaultValue
-            }
-        }
+    override protected fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any?) {
+        val def = defaultValue as? String
+        color = if (restoreValue) getPersistedString(def) else def
         setSummary(color)
     }
 
