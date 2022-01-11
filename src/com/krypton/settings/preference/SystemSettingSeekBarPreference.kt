@@ -20,15 +20,10 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-import androidx.core.content.res.TypedArrayUtils
-import androidx.preference.R
-
 class SystemSettingSeekBarPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.seekBarPreferenceStyle,
-    defStyleRes: Int = 0,
-): CustomSeekBarPreference(context, attrs, defStyleAttr, defStyleRes) {
+    attrs: AttributeSet? = null
+): CustomSeekBarPreference(context, attrs) {
     init {
         setPreferenceDataStore(SystemSettingsStore(context.contentResolver))
     }

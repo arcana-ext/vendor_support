@@ -18,30 +18,24 @@
 package com.krypton.settings.preference
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 
-import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 
 import com.krypton.settings.R
 
-open class CustomSeekBarPreference@JvmOverloads constructor(
+open class CustomSeekBarPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = androidx.preference.R.attr.seekBarPreferenceStyle,
-    defStyleRes: Int = 0,
-): Preference(context, attrs, defStyleAttr, defStyleRes), SeekBar.OnSeekBarChangeListener,
+): Preference(context, attrs), SeekBar.OnSeekBarChangeListener,
         View.OnClickListener, View.OnLongClickListener {
 
     private var interval = 1
@@ -144,25 +138,8 @@ open class CustomSeekBarPreference@JvmOverloads constructor(
             else
                 it.setVisibility(View.VISIBLE)
         }
-        minusImageView?.let {
-            if (seekBarValue == minValue || trackingTouch) {
-                it.setClickable(false)
-                it.setColorFilter(context.getColor(R.color.disabled_text_color),
-                    PorterDuff.Mode.MULTIPLY)
-            } else {
-                it.setClickable(true)
-                it.clearColorFilter()
-            }
-        }
-        plusImageView?.let {
-            if (seekBarValue == maxValue || trackingTouch) {
-                it.setClickable(false)
-                it.setColorFilter(context.getColor(R.color.disabled_text_color), PorterDuff.Mode.MULTIPLY)
-            } else {
-                it.setClickable(true)
-                it.clearColorFilter()
-            }
-        }
+        minusImageView?.setClickable(seekBarValue >= minValue && !trackingTouch)
+        plusImageView?.setClickable(seekBarValue <= maxValue && !trackingTouch)
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {

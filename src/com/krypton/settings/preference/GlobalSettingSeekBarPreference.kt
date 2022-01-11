@@ -20,14 +20,10 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-import androidx.preference.R
-
 class GlobalSettingSeekBarPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.seekBarPreferenceStyle,
-    defStyleRes: Int = 0,
-): CustomSeekBarPreference(context, attrs, defStyleAttr, defStyleRes) {
+): CustomSeekBarPreference(context, attrs) {
     init {
         setPreferenceDataStore(GlobalSettingsStore(context.contentResolver))
     }
