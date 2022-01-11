@@ -18,28 +18,16 @@ package com.krypton.settings.preference
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.util.AttributeSet
 
-import androidx.core.content.res.TypedArrayUtils
 import androidx.preference.DialogPreference
-import androidx.preference.PreferenceDataStore
-import androidx.preference.R
 
-abstract class SettingColorPickerPreference @JvmOverloads constructor(
+open class SettingColorPickerPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
-        R.attr.dialogPreferenceStyle,
-        android.R.attr.dialogPreferenceStyle),
-    defStyleRes: Int = 0,
-): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
+): DialogPreference(context, attrs) {
 
     private var color: String? = null
-
-    init {
-        setPreferenceDataStore(getSettingsDataStore(context))
-    }
 
     override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
         return a.getString(index)
@@ -52,6 +40,4 @@ abstract class SettingColorPickerPreference @JvmOverloads constructor(
     }
 
     fun getColor(): String? = color
-
-    abstract fun getSettingsDataStore(context: Context): PreferenceDataStore
 }

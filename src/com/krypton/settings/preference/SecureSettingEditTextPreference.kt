@@ -19,16 +19,13 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-import androidx.core.content.res.TypedArrayUtils
-import androidx.preference.R
+import androidx.preference.EditTextPreference
 
 public class SecureSettingEditTextPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
-        R.attr.editTextPreferenceStyle,
-        android.R.attr.editTextPreferenceStyle),
-    defStyleRes: Int = 0,
-): SettingEditTextPreference(context, attrs, defStyleAttr, defStyleRes) {
-    override fun getSettingsDataStore(context: Context) = SecureSettingsStore(context.contentResolver)
+): EditTextPreference(context, attrs) {
+    init {
+        setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
+    }
 }

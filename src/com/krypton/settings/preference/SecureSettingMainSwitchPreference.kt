@@ -19,19 +19,12 @@ package com.krypton.settings.preference
 import android.content.Context
 import android.util.AttributeSet
 
-import androidx.core.content.res.TypedArrayUtils
-import androidx.preference.R
-
 import com.android.settingslib.widget.MainSwitchPreference
 
 class SecureSettingMainSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = TypedArrayUtils.getAttr(context,
-        R.attr.switchPreferenceStyle,
-        android.R.attr.switchPreferenceStyle),
-    defStyleRes: Int = 0,
-): MainSwitchPreference(context, attrs, defStyleAttr, defStyleRes) {
+): MainSwitchPreference(context, attrs) {
     init {
         setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
     }
