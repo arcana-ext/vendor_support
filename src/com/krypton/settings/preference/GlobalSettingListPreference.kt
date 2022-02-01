@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 AICP
- * Copyright (C) 2021-2022 AOSP-Krypton Project
+ * Copyright (C) 2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import android.util.AttributeSet
 
 import androidx.preference.ListPreference
 
-class SecureSettingListPreference @JvmOverloads constructor(
+class GlobalSettingListPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ): ListPreference(context, attrs) {
     init {
-        setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
+        setPreferenceDataStore(GlobalSettingsStore(context.contentResolver))
     }
 }
