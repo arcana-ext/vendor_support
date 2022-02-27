@@ -17,7 +17,6 @@
 package com.krypton.settings.fragment
 
 import android.annotation.ColorInt
-import android.content.Context
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -27,7 +26,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.Spanned
 import android.text.InputFilter
-import android.text.TextWatcher
 import android.view.HapticFeedbackConstants.KEYBOARD_PRESS
 import android.view.LayoutInflater
 import android.view.View
@@ -37,8 +35,10 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 
 import androidx.core.graphics.ColorUtils
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -50,24 +50,14 @@ class ColorPickerFragment(
     RadioGroup.OnCheckedChangeListener,
     SeekBar.OnSeekBarChangeListener {
 
-    private val hueGradientColors = intArrayOf(
-        HSVToColor(0f, 1f, 1f),
-        HSVToColor(60f, 1f, 1f),
-        HSVToColor(120f, 1f, 1f),
-        HSVToColor(180f, 1f, 1f),
-        HSVToColor(240f, 1f, 1f),
-        HSVToColor(300f, 1f, 1f),
-        HSVToColor(360f, 1f, 1f),
-    )
-
     private lateinit var colorPreview: View
     private lateinit var colorInput: EditText
     private lateinit var seekBarOne: SeekBar
     private lateinit var seekBarTwo: SeekBar
     private lateinit var seekBarThree: SeekBar
+
     private var colorModel = ColorModel.RGB
     private var textInputChangedInternal = false // Internal variable to prevent loops with TextWatcher
-
     private var confirmListener: (String) -> Unit = {}
 
     @ColorInt
@@ -87,109 +77,111 @@ class ColorPickerFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT)
+        activity?.requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
         setStyle(STYLE_NORMAL, R.style.ColorPickerStyle)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.color_picker_layout, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.color_picker_layout, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)  {
         colorPreview = view.findViewById(R.id.color_preview)
         colorInput = view.findViewById(R.id.color_input)
 
-        colorInput.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // Not implemented
+        colorInput.doAfterTextChanged {
+            if (textInputChangedInternal) {
+                // Reset it here
+                textInputChangedInternal = false
+                return@doAfterTextChanged
             }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // Not implemented
+            if (it?.length != 7) return@doAfterTextChanged
+            color = try {
+                Color.parseColor(it.toString())
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(
+                    context,
+                    R.string.invalid_color,
+                    Toast.LENGTH_SHORT
+                )
+                Color.WHITE
             }
+            updateSliders()
+            updateSliderGradients(false)
+            previewColor(true)
+        }
 
-            override fun afterTextChanged(s: Editable) {
-                if (textInputChangedInternal) {
-                    // Reset it here
-                    textInputChangedInternal = false
-                } else if (s.length == 7) {
-                    color = Color.parseColor(s.toString())
-                    updateSliders()
-                    updateSliderGradients(false)
-                    previewColor(true)
-                }
-            }
-        });
-
-        colorInput.setFilters(arrayOf<InputFilter>(
+        colorInput.filters = arrayOf(
             InputFilter.LengthFilter(7),
-            object: InputFilter {
-                override fun filter(
-                    source: CharSequence,
-                    start: Int,
-                    end: Int,
-                    dest: Spanned,
-                    dstart: Int,
-                    dend: Int,
-                ): String? {
-                    // Deletion
-                    if (start == 0 && end == 0) {
-                        return null
+            InputFilter filter@ { source, start, end, _, dstart, dend ->
+                // Deletion
+                if (start == 0 && end == 0) {
+                    return@filter null
+                }
+                if (dstart == 0) {
+                    // First character has to be # and rest of them
+                    // (if present) be a valid hex char
+                    if (!source.startsWith("#")) {
+                        return@filter ""
                     }
-                    var hexSubString = source
-                    if ((end - start) == 7) {
-                        hexSubString = source.subSequence(1, 7)
-                        if (!source.get(0).equals('#')) {
-                            return ""
-                        }
+                    // Just a single char
+                    if (dstart == dend) return@filter null
+                    if (!HEX_PATTERN.matches(source.subSequence(1, end))) {
+                        return@filter ""
                     }
-                    return if (HEX_PATTERN.matches(hexSubString)) {
-                        null
-                    } else {
-                        ""
+                } else {
+                    // Does not start from 0, so every char has to be valid hex
+                    if (!HEX_PATTERN.matches(source)) {
+                        return@filter ""
                     }
                 }
-            }
-        ));
-
-        val cancelButton: Button = view.findViewById(R.id.cancel_button)
-        cancelButton.setOnClickListener(View.OnClickListener{
-            it.performHapticFeedback(KEYBOARD_PRESS)
-            dialog?.dismiss()
-        })
-
-        val confirmButton: Button = view.findViewById(R.id.confirm_button)
-        confirmButton.setOnClickListener({
-            it.performHapticFeedback(KEYBOARD_PRESS)
-            dialog?.dismiss()
-            colorInput.text.toString().let {
-                if (it.isEmpty() || it.length == 7) {
-                    confirmListener(it)
+                if ((end - start) == 7) { // Full hex input
+                    if (!COLOR_HEX_PATTERN.matches(source)) {
+                        return@filter ""
+                    }
                 }
+                null
             }
-        })
+        )
 
-        seekBarOne = view.findViewById(R.id.seekBar1)
-        seekBarTwo = view.findViewById(R.id.seekBar2)
-        seekBarThree = view.findViewById(R.id.seekBar3)
+        view.findViewById<Button>(R.id.cancel_button).setOnClickListener {
+            it.performHapticFeedback(KEYBOARD_PRESS)
+            dialog?.dismiss()
+        }
+
+        view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
+            it.performHapticFeedback(KEYBOARD_PRESS)
+            dialog?.dismiss()
+            val colorHex = colorInput.text.toString()
+            if (colorHex.isEmpty() || colorHex.length == 7) {
+                confirmListener(colorHex)
+            }
+        }
 
         /*
          * Set the drawables as mutable so that they
          * do not share a constant state or else all
          * three slider gradients will look alike
          */
-        seekBarOne.getProgressDrawable().mutate()
-        seekBarTwo.getProgressDrawable().mutate()
-        seekBarThree.getProgressDrawable().mutate()
-
-        // Register progress change listeners
-        seekBarTwo.setOnSeekBarChangeListener(this)
-        seekBarOne.setOnSeekBarChangeListener(this)
-        seekBarThree.setOnSeekBarChangeListener(this)
+        seekBarOne = view.findViewById<SeekBar>(R.id.seekBar1).also {
+            it.progressDrawable.mutate()
+            it.setOnSeekBarChangeListener(this)
+        }
+        seekBarTwo = view.findViewById<SeekBar>(R.id.seekBar2).also {
+            it.progressDrawable.mutate()
+            it.setOnSeekBarChangeListener(this)
+        }
+        seekBarThree = view.findViewById<SeekBar>(R.id.seekBar3).also {
+            it.progressDrawable.mutate()
+            it.setOnSeekBarChangeListener(this)
+        }
 
         // Register listener for color model change
-        val colorModelGroup: RadioGroup = view.findViewById(R.id.color_model_group)
-        colorModelGroup.setOnCheckedChangeListener(this)
+        view.findViewById<RadioGroup>(R.id.color_model_group).also {
+            it.setOnCheckedChangeListener(this)
+        }
 
         // Update sliders and preview
         updateSliderMax()
@@ -199,24 +191,32 @@ class ColorPickerFragment(
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-        if (!fromUser) {
-            return
-        }
-        when (colorModel) {
+        if (!fromUser) return
+        color = when (colorModel) {
             ColorModel.RGB -> {
-                color = Color.rgb(seekBarOne.progress, seekBarTwo.progress,
-                    seekBarThree.progress)
+                Color.rgb(
+                    seekBarOne.progress,
+                    seekBarTwo.progress,
+                    seekBarThree.progress
+                )
             }
             ColorModel.HSV -> {
-                color = HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
-                    seekBarThree.progress / 100f)
-                updateSliderGradients(false)
+                HSVToColor(
+                    seekBarOne.progress.toFloat(),
+                    seekBarTwo.progress / 100f,
+                    seekBarThree.progress / 100f
+                )
             }
             ColorModel.HSL -> {
-                color = HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
-                    seekBarThree.progress / 100f)
-                updateSliderGradients(false)
+                HSLToColor(
+                    seekBarOne.progress.toFloat(),
+                    seekBarTwo.progress / 100f,
+                    seekBarThree.progress / 100f
+                )
             }
+        }
+        if (colorModel != ColorModel.RGB) {
+            updateSliderGradients(false)
         }
         previewColor(false)
     }
@@ -230,10 +230,11 @@ class ColorPickerFragment(
     }
 
     override fun onCheckedChanged(group: RadioGroup, checkedId: Int) {
-        when (checkedId) {
-            R.id.rgb_button -> { colorModel = ColorModel.RGB }
-            R.id.hsv_button -> { colorModel = ColorModel.HSV }
-            R.id.hsl_button -> { colorModel = ColorModel.HSL }
+        colorModel = when (checkedId) {
+            R.id.rgb_button -> ColorModel.RGB
+            R.id.hsv_button -> ColorModel.HSV
+            R.id.hsl_button -> ColorModel.HSL
+            else -> ColorModel.RGB
         }
         updateSliderMax()
         updateSliders()
@@ -259,43 +260,41 @@ class ColorPickerFragment(
      */
     private fun updateSliders() {
         when (colorModel) {
-            ColorModel.RGB -> { updateSliderProgressFromColor() }
+            ColorModel.RGB -> updateSliderProgressFromColor()
             ColorModel.HSV -> {
-                with (FloatArray(3)) {
-                    Color.colorToHSV(color, this)
-                    updateSliderProgressFromHSVorHSL(this)
-                }
+                val array = FloatArray(3)
+                Color.colorToHSV(color, array)
+                updateSliderProgressFromHSVorHSL(array)
             }
             ColorModel.HSL -> {
-                with (FloatArray(3)) {
-                    ColorUtils.colorToHSL(color, this)
-                    updateSliderProgressFromHSVorHSL(this)
-                }
+                val array = FloatArray(3)
+                ColorUtils.colorToHSL(color, array)
+                updateSliderProgressFromHSVorHSL(array)
             }
         }
     }
 
     // For updating RGB slider progress
     private fun updateSliderProgressFromColor() {
-        seekBarOne.setProgress(Color.red(color))
-        seekBarTwo.setProgress(Color.green(color))
-        seekBarThree.setProgress(Color.blue(color))
+        seekBarOne.progress = Color.red(color)
+        seekBarTwo.progress = Color.green(color)
+        seekBarThree.progress = Color.blue(color)
     }
 
     // For updating HSV / HSL slider progress
     private fun updateSliderProgressFromHSVorHSL(hsvOrHSL: FloatArray) {
-        seekBarOne.setProgress(hsvOrHSL[0].toInt())
-        seekBarTwo.setProgress((hsvOrHSL[1] * 100).toInt())
-        seekBarThree.setProgress((hsvOrHSL[2] * 100).toInt())
+        seekBarOne.progress = hsvOrHSL[0].toInt()
+        seekBarTwo.progress = (hsvOrHSL[1] * 100).toInt()
+        seekBarThree.progress = (hsvOrHSL[2] * 100).toInt()
     }
 
     // For updating the slider GradientDrawable's based on ColorModel
     private fun updateSliderGradients(colorModelChanged: Boolean) {
         if (colorModel == ColorModel.RGB) {
             if (colorModelChanged) {
-                updateRGBGradient(seekBarOne.getProgressDrawable(), Color.RED)
-                updateRGBGradient(seekBarTwo.getProgressDrawable(), Color.GREEN)
-                updateRGBGradient(seekBarThree.getProgressDrawable(), Color.BLUE)
+                updateRGBGradient(seekBarOne.progressDrawable, Color.RED)
+                updateRGBGradient(seekBarTwo.progressDrawable, Color.GREEN)
+                updateRGBGradient(seekBarThree.progressDrawable, Color.BLUE)
             }
         } else {
             if (colorModelChanged) {
@@ -311,64 +310,81 @@ class ColorPickerFragment(
     }
 
     private fun updateLuminanceGradient() {
-        val drawable = seekBarThree.getProgressDrawable() as GradientDrawable
-        drawable.setColors(intArrayOf(
+        val drawable = seekBarThree.progressDrawable as GradientDrawable
+        drawable.colors = intArrayOf(
             Color.BLACK,
-            HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 0.5f),
+            HSLToColor(
+                seekBarOne.progress.toFloat(),
+                seekBarTwo.progress / 100f,
+                0.5f
+            ),
             Color.WHITE,
-        ))
+        )
     }
 
     private fun updateValueGradient() {
-        val drawable = seekBarThree.getProgressDrawable() as GradientDrawable
-        drawable.setColors(intArrayOf(
+        val drawable = seekBarThree.progressDrawable as GradientDrawable
+        drawable.colors = intArrayOf(
             Color.BLACK,
-            HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 1f),
-        ))
+            HSVToColor(
+                seekBarOne.progress.toFloat(),
+                seekBarTwo.progress / 100f,
+                1f
+            ),
+        )
     }
 
     private fun updateSaturationGradient() {
-        val drawable = seekBarTwo.getProgressDrawable() as GradientDrawable
-        var colors = intArrayOf(Color.WHITE, 0)
-        if (colorModel == ColorModel.HSV) {
-            colors[1] = HSVToColor(seekBarOne.progress.toFloat(), 1f,
-                seekBarThree.progress / 100f)
-        } else {
-            colors[1] = HSLToColor(seekBarOne.progress.toFloat(), 1f,
-                seekBarThree.progress / 100f)
-        }
-        drawable.setColors(colors)
+        val drawable = seekBarTwo.progressDrawable as GradientDrawable
+        drawable.colors = intArrayOf(
+            Color.WHITE,
+            if (colorModel == ColorModel.HSV) {
+                HSVToColor(
+                    seekBarOne.progress.toFloat(),
+                    1f,
+                    seekBarThree.progress / 100f
+                )
+            } else {
+                HSLToColor(
+                    seekBarOne.progress.toFloat(),
+                    1f,
+                    seekBarThree.progress / 100f
+                )
+            }
+        )
     }
 
     private fun updateHueGradient() {
-        val drawable = seekBarOne.getProgressDrawable() as GradientDrawable
-        drawable.setColors(hueGradientColors)
+        val drawable = seekBarOne.progressDrawable as GradientDrawable
+        drawable.colors = hueGradientColors
     }
 
     private fun updateRGBGradient(progressDrawable: Drawable, color: Int) {
         val drawable = progressDrawable as GradientDrawable
-        drawable.setColors(intArrayOf(Color.BLACK, color))
+        drawable.colors = intArrayOf(Color.BLACK, color)
     }
 
     // inputFromUser should be set to true when user has entered a hex color
     private fun previewColor(inputFromUser: Boolean) {
-        colorPreview.setBackgroundTintList(ColorStateList.valueOf(color))
-        if (ColorUtils.calculateLuminance(color) > 0.5) {
-            colorInput.setTextColor(Color.BLACK)
-        } else {
-            colorInput.setTextColor(Color.WHITE)
-        }
+        colorPreview.backgroundTintList = ColorStateList.valueOf(color)
+        colorInput.setTextColor(
+            if (ColorUtils.calculateLuminance(color) > 0.5) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+        )
         textInputChangedInternal = true
         if (!inputFromUser) {
-            colorInput.setText(Utils.colorToHex(color))
+            colorInput.setText(colorToHex(color))
         }
     }
 
     private fun updateSliderMax() {
         val isRGB = colorModel == ColorModel.RGB
-        seekBarOne.setMax(if (isRGB) 255 else 360)
-        seekBarTwo.setMax(if (isRGB) 255 else 100)
-        seekBarThree.setMax(if (isRGB) 255 else 100)
+        seekBarOne.max = if (isRGB) 255 else 360
+        seekBarTwo.max = if (isRGB) 255 else 100
+        seekBarThree.max = if (isRGB) 255 else 100
     }
 
     private enum class ColorModel {
@@ -378,7 +394,12 @@ class ColorPickerFragment(
     }
 
     companion object {
-        private val HEX_PATTERN = Regex("^[#][0-9a-fA-F]{6}")
+        private val HEX_PATTERN = Regex("[0-9a-fA-F]+")
+        private val COLOR_HEX_PATTERN = Regex("^[#][0-9a-fA-F]{6}")
+
+        private val hueGradientColors = IntArray(7) {
+            HSVToColor(it * 60f, 1f, 1f)
+        }
 
         private fun HSVToColor(
             hue: Float,

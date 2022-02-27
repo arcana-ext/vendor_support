@@ -22,6 +22,7 @@ android_library {
     ],
     static_libs: [
         "androidx-constraintlayout_constraintlayout",
+        "androidx.core_core-ktx",
         "androidx.fragment_fragment",
         "androidx.fragment_fragment-ktx",
         "androidx.preference_preference",
