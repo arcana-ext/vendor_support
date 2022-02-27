@@ -43,7 +43,6 @@ import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.krypton.settings.R
-import com.krypton.settings.Utils
 
 class ColorPickerFragment(
     defaultColor: String? = "#FFFFFF",
@@ -52,13 +51,13 @@ class ColorPickerFragment(
     SeekBar.OnSeekBarChangeListener {
 
     private val hueGradientColors = intArrayOf(
-        Utils.HSVToColor(0f, 1f, 1f),
-        Utils.HSVToColor(60f, 1f, 1f),
-        Utils.HSVToColor(120f, 1f, 1f),
-        Utils.HSVToColor(180f, 1f, 1f),
-        Utils.HSVToColor(240f, 1f, 1f),
-        Utils.HSVToColor(300f, 1f, 1f),
-        Utils.HSVToColor(360f, 1f, 1f),
+        HSVToColor(0f, 1f, 1f),
+        HSVToColor(60f, 1f, 1f),
+        HSVToColor(120f, 1f, 1f),
+        HSVToColor(180f, 1f, 1f),
+        HSVToColor(240f, 1f, 1f),
+        HSVToColor(300f, 1f, 1f),
+        HSVToColor(360f, 1f, 1f),
     )
 
     private lateinit var colorPreview: View
@@ -144,10 +143,10 @@ class ColorPickerFragment(
                             return ""
                         }
                     }
-                    if (Utils.HEX_PATTERN.matcher(hexSubString).matches()) {
-                        return null
+                    return if (HEX_PATTERN.matches(hexSubString)) {
+                        null
                     } else {
-                        return ""
+                        ""
                     }
                 }
             }
@@ -209,12 +208,12 @@ class ColorPickerFragment(
                     seekBarThree.progress)
             }
             ColorModel.HSV -> {
-                color = Utils.HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
+                color = HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
                     seekBarThree.progress / 100f)
                 updateSliderGradients(false)
             }
             ColorModel.HSL -> {
-                color = Utils.HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
+                color = HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f,
                     seekBarThree.progress / 100f)
                 updateSliderGradients(false)
             }
@@ -315,7 +314,7 @@ class ColorPickerFragment(
         val drawable = seekBarThree.getProgressDrawable() as GradientDrawable
         drawable.setColors(intArrayOf(
             Color.BLACK,
-            Utils.HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 0.5f),
+            HSLToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 0.5f),
             Color.WHITE,
         ))
     }
@@ -324,7 +323,7 @@ class ColorPickerFragment(
         val drawable = seekBarThree.getProgressDrawable() as GradientDrawable
         drawable.setColors(intArrayOf(
             Color.BLACK,
-            Utils.HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 1f),
+            HSVToColor(seekBarOne.progress.toFloat(), seekBarTwo.progress / 100f, 1f),
         ))
     }
 
@@ -332,10 +331,10 @@ class ColorPickerFragment(
         val drawable = seekBarTwo.getProgressDrawable() as GradientDrawable
         var colors = intArrayOf(Color.WHITE, 0)
         if (colorModel == ColorModel.HSV) {
-            colors[1] = Utils.HSVToColor(seekBarOne.progress.toFloat(), 1f,
+            colors[1] = HSVToColor(seekBarOne.progress.toFloat(), 1f,
                 seekBarThree.progress / 100f)
         } else {
-            colors[1] = Utils.HSLToColor(seekBarOne.progress.toFloat(), 1f,
+            colors[1] = HSLToColor(seekBarOne.progress.toFloat(), 1f,
                 seekBarThree.progress / 100f)
         }
         drawable.setColors(colors)
@@ -372,13 +371,27 @@ class ColorPickerFragment(
         seekBarThree.setMax(if (isRGB) 255 else 100)
     }
 
-    companion object {
-        const val BUNDLE_KEY = "color"
+    private enum class ColorModel {
+        RGB,
+        HSL,
+        HSV
     }
-}
 
-enum class ColorModel {
-    RGB,
-    HSL,
-    HSV
+    companion object {
+        private val HEX_PATTERN = Regex("^[#][0-9a-fA-F]{6}")
+
+        private fun HSVToColor(
+            hue: Float,
+            sat: Float,
+            value: Float,
+        ): Int = Color.HSVToColor(floatArrayOf(hue, sat, value))
+
+        private fun HSLToColor(
+            hue: Float,
+            sat: Float,
+            lum: Float,
+        ): Int = ColorUtils.HSLToColor(floatArrayOf(hue, sat, lum))
+
+        private fun colorToHex(color: Int) = String.format("#%06X", (0xFFFFFF and color))
+    }
 }
