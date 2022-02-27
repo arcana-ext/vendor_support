@@ -40,17 +40,13 @@ import android.widget.TextView
 
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
-import androidx.fragment.app.setFragmentResult
-import androidx.preference.PreferenceDataStore
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.krypton.settings.R
 import com.krypton.settings.Utils
 
 class ColorPickerFragment(
-    private val settingKey: String,
-    private val preferenceDataStore: PreferenceDataStore?,
-    defaultColor: String?,
+    defaultColor: String = "#FFFFFF",
 ) : BottomSheetDialogFragment(),
     RadioGroup.OnCheckedChangeListener,
     SeekBar.OnSeekBarChangeListener {
@@ -73,21 +69,16 @@ class ColorPickerFragment(
     private var colorModel = ColorModel.RGB
     private var textInputChangedInternal = false // Internal variable to prevent loops with TextWatcher
 
+    private var confirmListener: (String) -> Unit = {}
+
     @ColorInt
     private var color: Int
 
     init {
-        val defColor = defaultColor ?: "#FFFFFF"
-        val defColorInt = try {
-            Color.parseColor(defColor)
-        } catch (e: Exception) {
-            Color.WHITE
-        }
         color = try {
-            Color.parseColor(preferenceDataStore?.getString(
-                settingKey, defColor) ?: defColor)
-        } catch (e: Exception) {
-            defColorInt
+            Color.parseColor(defaultColor)
+        } catch (e: IllegalArgumentException) {
+            Color.WHITE
         }
     }
 
@@ -170,7 +161,7 @@ class ColorPickerFragment(
             dialog?.dismiss()
             colorInput.text.toString().let {
                 if (it.isEmpty() || it.length == 7) {
-                    persistValue(it)
+                    confirmListener(it)
                 }
             }
         })
@@ -247,13 +238,15 @@ class ColorPickerFragment(
     }
 
     /*
-     * Called when confirm button of the dialog is pressed.
-     * @param hexColor will be with # prefix and of RGB type
+     * Set a confirmation listener that will be invoked when confirm
+     * button of the dialog is pressed.
+     *
+     * @param listener the listener to be invoked. Hex value of the
+     *      color (including # prefix and RGB) will be the type parameter
+     *      of the listener. Do note that the parameter can also be empty.
      */
-    fun persistValue(hexColor: String) {
-        preferenceDataStore?.let {
-            it.putString(settingKey, hexColor)
-        }
+    fun setOnConfirmListener(listener: (String) -> Unit) {
+        confirmListener = listener
     }
 
     /**
