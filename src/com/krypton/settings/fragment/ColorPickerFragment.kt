@@ -46,7 +46,7 @@ import com.krypton.settings.R
 import com.krypton.settings.Utils
 
 class ColorPickerFragment(
-    defaultColor: String = "#FFFFFF",
+    defaultColor: String? = "#FFFFFF",
 ) : BottomSheetDialogFragment(),
     RadioGroup.OnCheckedChangeListener,
     SeekBar.OnSeekBarChangeListener {
@@ -75,10 +75,14 @@ class ColorPickerFragment(
     private var color: Int
 
     init {
-        color = try {
-            Color.parseColor(defaultColor)
-        } catch (e: IllegalArgumentException) {
+        color = if (defaultColor == null) {
             Color.WHITE
+        } else {
+            try {
+                Color.parseColor(defaultColor)
+            } catch (e: IllegalArgumentException) {
+                Color.WHITE
+            }
         }
     }
 

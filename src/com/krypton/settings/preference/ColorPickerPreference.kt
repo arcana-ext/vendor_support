@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 AOSP-Krypton Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,13 @@ import android.util.AttributeSet
 
 import androidx.preference.DialogPreference
 
-open class SettingColorPickerPreference @JvmOverloads constructor(
+open class ColorPickerPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-): DialogPreference(context, attrs) {
+) : DialogPreference(context, attrs) {
 
-    private var color: String? = null
+    var color: String? = null
+        private set
 
     override protected fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
         return a.getString(index)
@@ -39,5 +40,10 @@ open class SettingColorPickerPreference @JvmOverloads constructor(
         setSummary(color)
     }
 
-    fun getColor(): String? = color
+    fun setColor(color: String) {
+        if (!callChangeListener(color)) return
+        this.color = color
+        setSummary(color)
+        persistString(color)
+    }
 }

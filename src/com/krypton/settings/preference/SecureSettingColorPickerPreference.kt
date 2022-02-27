@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 AOSP-Krypton Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import android.util.AttributeSet
 public class SecureSettingColorPickerPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-): SettingColorPickerPreference(context, attrs) {
+): ColorPickerPreference(context, attrs) {
     init {
         setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
     }
