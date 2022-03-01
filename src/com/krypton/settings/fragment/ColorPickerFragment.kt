@@ -64,7 +64,7 @@ class ColorPickerFragment(
     private var color: Int
 
     init {
-        color = if (defaultColor == null) {
+        color = if (defaultColor == null || defaultColor.isEmpty()) {
             Color.WHITE
         } else {
             try {
