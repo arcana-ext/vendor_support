@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.util.AttributeSet
 
 import com.android.settingslib.widget.MainSwitchPreference
 
-class SecureSettingMainSwitchPreference @JvmOverloads constructor(
+class GlobalSettingMainSwitchPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null,
+    attrs: AttributeSet? = null
 ): MainSwitchPreference(context, attrs) {
     init {
-        setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
+        setPreferenceDataStore(GlobalSettingsStore(context.contentResolver))
     }
 }

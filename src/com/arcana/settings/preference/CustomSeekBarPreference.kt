@@ -15,7 +15,7 @@
  * limitations under the License
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -30,7 +30,7 @@ import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 
-import com.krypton.settings.R
+import com.arcana.settings.R
 
 open class CustomSeekBarPreference @JvmOverloads constructor(
     context: Context,

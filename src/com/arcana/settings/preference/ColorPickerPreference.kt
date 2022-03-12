@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.content.res.TypedArray

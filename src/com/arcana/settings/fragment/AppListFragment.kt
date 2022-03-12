@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.fragment
+package com.arcana.settings.fragment
 
 import android.content.Context
 import android.content.pm.PackageInfo
@@ -41,7 +41,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 import com.google.android.material.appbar.AppBarLayout
-import com.krypton.settings.R
+import com.arcana.settings.R
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

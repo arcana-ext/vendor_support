@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.ContentResolver
 import android.provider.Settings

@@ -14,18 +14,18 @@
  * limitations under the License
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.util.AttributeSet
 
 import androidx.preference.EditTextPreference
 
-public class SecureSettingEditTextPreference @JvmOverloads constructor(
+public class SystemSettingEditTextPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ): EditTextPreference(context, attrs) {
     init {
-        setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
+        setPreferenceDataStore(SystemSettingsStore(context.contentResolver))
     }
 }

@@ -15,7 +15,7 @@
 android_library {
     name: "vendor_support",
     srcs: [
-        "src/com/krypton/settings/**/*.kt",
+        "src/com/arcana/settings/**/*.kt",
     ],
     defaults: [
         "SettingsLibDefaults",

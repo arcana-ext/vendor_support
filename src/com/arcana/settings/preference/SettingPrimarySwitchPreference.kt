@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -32,7 +32,7 @@ import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceViewHolder
 
 import com.android.settingslib.widget.TwoTargetPreference
-import com.krypton.settings.R
+import com.arcana.settings.R
 
 /**
  * A primary switch that can observe changes to setting value and update

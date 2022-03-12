@@ -11,22 +11,21 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ * limitations under the License
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
-import android.provider.Settings
 import android.util.AttributeSet
 
-class SecureSettingPrimarySwitchPreference @JvmOverloads constructor(
+import androidx.preference.EditTextPreference
+
+public class SecureSettingEditTextPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-): SettingPrimarySwitchPreference(context, attrs) {
+): EditTextPreference(context, attrs) {
     init {
         setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
     }
-
-    override fun getUri() = Settings.Secure.getUriFor(key)
 }

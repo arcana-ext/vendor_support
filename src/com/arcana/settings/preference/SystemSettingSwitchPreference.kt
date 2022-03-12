@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 AICP
- * Copyright (C) 2021-2022 AOSP-Krypton Project
+ *               2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.preference
+package com.arcana.settings.preference
 
 import android.content.Context
 import android.util.AttributeSet
 
-import androidx.preference.ListPreference
+import androidx.preference.SwitchPreference
 
-class SecureSettingListPreference @JvmOverloads constructor(
+class SystemSettingSwitchPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-): ListPreference(context, attrs) {
+): SwitchPreference(context, attrs) {
     init {
-        setPreferenceDataStore(SecureSettingsStore(context.contentResolver))
+        setPreferenceDataStore(SystemSettingsStore(context.contentResolver))
     }
 }

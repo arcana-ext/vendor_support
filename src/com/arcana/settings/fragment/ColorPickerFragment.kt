@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.fragment
+package com.arcana.settings.fragment
 
 import android.annotation.ColorInt
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -42,7 +42,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.krypton.settings.R
+import com.arcana.settings.R
 
 class ColorPickerFragment(
     defaultColor: String? = "#FFFFFF",
